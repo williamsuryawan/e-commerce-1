@@ -1,9 +1,8 @@
 const User = require('../models/user');
 const Cart = require('../models/cart')
 const bcrypt = require('bcrypt');
-// const {jwtSign, jwtVerify} = require('../helpers/jwtConvert');
 const jwtConvert = require('../helpers/jwtConvert');
-const googleSignin = require('../helpers/googleSignIn')
+// const googleSignin = require('../helpers/googleSignIn')
 
 class UserController {
     static findUser (req,res) {
@@ -67,11 +66,6 @@ class UserController {
                             message: `Wrong Email/Password`
                         })
                     } else {
-                      //   let jwtSignResult = jwtSign (user, req.body.password)
-                      //   if (jwtSignResult) {
-
-                      //   }
-                      // console.log("User berhasil ditemukan ====>", user)
                         let isValid = bcrypt.compareSync(req.body.password, user.password)
                         console.log("Cek validity==>", isValid)
                         if(isValid) {
@@ -89,33 +83,7 @@ class UserController {
                 })
         } else if (req.body.loginVia == 'googleSignIn') {
           console.log("masuk googlesign in", req.body)
-          googleSignin(req.body.id_token)
-            .then(user => {
-              User
-                .findOne({email: user.email})
-                .then(findUser => {
-                  console.log("pencarian user via googlesign in", findUser)
-                  if(!findUser) {
-                    User
-                      .create({
-                        email: user.email,
-                        password: process.env.GOOGLE_DEFAULT_PASSWORD
-                      })
-                      .then(registerUser => {
-                        let token = jwtConvert.sign({
-                          email: registerUser.email
-                        })
-                        res.status(201).json({token: token})
-                      })
-                  } else {
-                    let token = jwtConvert.sign({
-                      email: user.email
-                    })
-                    console.log("siap kirim token via sign google")
-                    res.status(200).json({token: token})
-                  }
-                })
-            })
+          
         }
     }
 

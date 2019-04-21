@@ -1,8 +1,7 @@
-const jwt = require('jsonwebtoken')
-// const Product = require('../models/prodoct')
 const Cart = require('../models/cart')
 const Transaction = require('../models/transaction')
 const User = require('../models/user')
+const { verify } = require('../helpers/jwtConvert.js')
 
 module.exports = {
     authentication: function (req,res, next) {
@@ -10,7 +9,7 @@ module.exports = {
             // console.log("req.body", req.body)
             console.log("Input verifikasi JWT", req.headers.hasOwnProperty('token'))
             try {
-                const decoded = jwt.verify(req.headers.token, process.env.JWT_SECRET);
+                const decoded = verify(req.headers.token);
                 console.log("Hasil verifikasi JWT", decoded)
                 if( decoded != null) {
                     req.loggedInUser = decoded;
@@ -32,7 +31,7 @@ module.exports = {
         }
     },
     authorizationCart: function(req, res, next) {
-        const decoded = jwt.verify(req.headers.token, process.env.JWT_SECRET);
+        const decoded = verify(req.headers.token);
         console.log("masuk authorization process", req.loggedInUser)
         Cart
             .findOne({userId: req.loggedInUser.id})
@@ -46,7 +45,7 @@ module.exports = {
             })
     },
     authorizationTransaction: function(req, res, next) {
-        const decoded = jwt.verify(req.headers.token, process.env.JWT_SECRET);
+        const decoded = verify(req.headers.token);
         console.log("masuk authorization process", req.loggedInUser)
         Transaction
             .findOne({userId: req.loggedInUser.id})
@@ -63,7 +62,7 @@ module.exports = {
         if(req.headers.hasOwnProperty('token')) {
             console.log("Masuk verifikasi admin", req.headers.hasOwnProperty('token'))
             try {
-                const decoded = jwt.verify(req.headers.token, process.env.JWT_SECRET)
+                const decoded = verify(req.headers.token)
                 console.log("Hasil verifikasi JWT admin verification", decoded)
                 if (decoded != null) {
                     User
