@@ -166,7 +166,7 @@ export default {
                 .then(agree => {
                 if (agree) {
                     return server
-                                .put("carts/empty", '', {
+                                .put("carts/empty", {}, {
                                         headers: { token: localStorage.getItem("token")}
                                         })
                                 .then(() => {
