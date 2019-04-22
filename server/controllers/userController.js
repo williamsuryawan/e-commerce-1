@@ -69,7 +69,7 @@ class UserController {
                         let isValid = bcrypt.compareSync(req.body.password, user.password)
                         console.log("Cek validity==>", isValid)
                         if(isValid) {
-                            let token = jwtConvert.sign({id: user._id, email: user.email}, process.env.JWT_SECRET)
+                            let token = jwtConvert.sign({id: user._id, email: user.email})
                             console.log("Token dihasilkan token", token)
                             res.status(200).json({
                                 token: token
@@ -92,7 +92,6 @@ class UserController {
           .findOne({
               email: req.loggedInUser.email
             })
-          .populate('listArticle')
           .then(user =>{
             console.log("hasil getuserdetail: ", user)
             res.status(200).json({
