@@ -6,7 +6,8 @@ const mongoose = require('mongoose');
 
 app.use(cors())
 // mongoose.connect(`mongodb://localhost/ecommerce-r-${process.env.NODE_ENV}`, { useNewUrlParser: true });
-mongoose.connect(`mongodb+srv://${process.env.name}:${process.env.password}@cluster0-dlbfv.mongodb.net/ecommerce?retryWrites=true`, {useNewUrlParser: true})
+mongoose.connect(`mongodb+srv://${process.env.name}:${process.env.password}@cluster0-dlbfv.mongodb.net/ecommerce-testing?retryWrites=true`, {useNewUrlParser: true})
+// mongoose.connect(`mongodb+srv://${process.env.name}:${process.env.password}@cluster0-dlbfv.mongodb.net/ecommerce?retryWrites=true`, {useNewUrlParser: true})
 
 // const index = require('./routes/index');
 const userRouter = require('./routes/users')

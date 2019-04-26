@@ -8,7 +8,7 @@ const userSchema = new Schema ({
     },
     email: {
         type: String,
-        required: [true, "email can't be empty"],
+        required: [true, "Email is required"],
         validate: [{
             validator: function (value) {
                 var emailRegex = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
@@ -32,17 +32,19 @@ const userSchema = new Schema ({
     },
     password: {
         type: String,
-        required: [true, "password can't be empty"],
-        minlength: [3, "password can't be less than 3 characters"]
+        required: [true, "Password is required"],
+        minlength: [3, "Password can't be less than 3 characters"]
     },
     role: {
-        type: String
+        type: String,
+        required: [true, "role can't be empty"]
     },
     address: {
         type: String
     },
     city: {
-        type: String
+        type: String,
+        required: [true, "city can't be empty"]
     },
     province: {
         type: String

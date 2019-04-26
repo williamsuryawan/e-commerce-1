@@ -19,20 +19,58 @@ class UserController {
 
     static register (req,res) {
         console.log("masuk ke register", req.body)
-        User
-            .create({
+        
+        if (req.body.role == 'admin') {
+            User.create({
+                name: req.body.name,
+                email: req.body.email,
+                password: req.body.password,
+                role: 'admin', 
+                address: req.body.address,
+                city: req.body.city,
+                province: req.body.province,
+                zipcode: req.body.zipcode
+            })
+            .then(newUser => {
+                //   res.status(201).json(newUser);
+                console.log("new admin", newUser)
+                return Cart.create({
+                listsProduct: [],
+                userId: newUser._id})
+                .then(newCart => {
+                    console.log("Hasil cart baru for admin", newCart)
+                    res.status(201).json(newUser)
+                    
+                })
+            })
+            .catch(err => {
+                console.log("terjadi error add admin", err)  
+                if (err.errors.email) {
+                      res.status(409).json({err: err.errors.email.message});
+                      // console.log()
+                  } else if(err.errors.phone) {
+                      res.status(409).json(err);
+                  } else if(err.errors.password) {
+                      res.status(409).json({err: err.errors.password.message});
+                  } else {
+                      res.status(500).json(err);
+                  }
+              }) 
+        } else {
+            User.create({
                 name: req.body.name,
                 email: req.body.email,
                 password: req.body.password,
                 role: 'customer', 
                 address: req.body.address,
-                city: req.body.province,
+                city: req.body.city,
                 province: req.body.province,
                 zipcode: req.body.zipcode
             })
             .then(newUser => {
-              res.status(201).json(newUser);
-              return Cart.create({
+                //   res.status(201).json(newUser);
+                console.log("berhasil new user", newUser)
+                return Cart.create({
                 listsProduct: [],
                 userId: newUser._id})
                 .then(newCart => {
@@ -42,15 +80,20 @@ class UserController {
                 })
             })
             .catch(err => {
-              console.log("terjadi error add users", err)  
-              if (err.errors.email) {
-                    res.status(409).json(err);
-                } else if(err.errors.phone) {
-                    res.status(409).json(err);
-                } else {
-                    res.status(500).json(err);
-                }
-            }) 
+                console.log("terjadi error add users", err)  
+                if (err.errors.email) {
+                      res.status(409).json({err: err.errors.email.message});
+                      // console.log()
+                  } else if(err.errors.phone) {
+                      res.status(409).json(err);
+                  } else if(err.errors.password) {
+                      res.status(409).json({err: err.errors.password.message});
+                  } else {
+                      res.status(500).json(err);
+                  }
+              }) 
+        }
+            
     }
 
     static login (req,res) {

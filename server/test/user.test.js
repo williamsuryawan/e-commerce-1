@@ -2,16 +2,18 @@ const chai = require('chai');
 const chaiHttp = require('chai-http');
 const expect = chai.expect;
 const app = require('../app.js');
-// const User = require('../models/user');
+const { user, loginUser } = require('./public')
+const User = require('../models/user');
 
 chai.use(chaiHttp);
 
 console.log("masuk awal testing")
+
 after(done => {
-    User
-     .deleteMany({}, () => {
-       done();
-     })
+  User
+   .deleteMany({}, () => {
+     done();
+   })
 })
 
 // USER
@@ -37,16 +39,11 @@ after(done => {
 describe('Users', function () {
   describe('POST /REGISTER', function () {
     it('should return status code 201 with response body of new created user', function (done) {
-      let newUser = {
-        name: 'William',
-        email: 'william@gmail.com',
-        password: '1234'
-      }
 
       chai
         .request(app)
         .post(`/users/register`)
-        .send(newUser)
+        .send(user)
         .end((err, res) => {
           expect(err).to.be.null;
           expect(res).to.have.status(201);
@@ -80,29 +77,24 @@ describe('Users', function () {
           expect(res).to.have.status(409);
           expect(res.body).to.be.an('object');
           expect(res.body).to.have.property('err');
-          expect(res.body.err).to.have.property('Email is required');
+          expect(res.body.err).to.be.equal('Email is required');
 
           done();
         })
     })
 
     it('should return status 409 with message "email is already registered"', function(done) {
-      let newUser = {
-        name: 'William',
-        email: 'william@gmail.com',
-        password: '1234'
-      }
 
       chai
         .request(app)
         .post(`/users/register`)
-        .send(newUser)
+        .send(user)
         .end((err, res) => {
           expect(err).to.be.null;
           expect(res).to.have.status(409);
           expect(res.body).to.be.an('object');
           expect(res.body).to.have.property('err');
-          expect(res.body.err).to.have.property('Email is already registered');
+          expect(res.body.err).to.be.equal('Email already exists');
 
           done();
         })
@@ -111,20 +103,21 @@ describe('Users', function () {
     it('should return status 409 with message "password is required"', function(done) {
       let newUser = {
         name: 'William',
-        email: 'willy@gmail.com',
-        password: null
+        email: 'halo@gmail.com',
+        password: null,
+        city: 'Jakarta'
       }
 
       chai
         .request(app)
         .post(`/users/register`)
-        .send(newUser)
+        .send(user)
         .end((err, res) => {
           expect(err).to.be.null;
           expect(res).to.have.status(409);
           expect(res.body).to.be.an('object');
           expect(res.body).to.have.property('err');
-          expect(res.body.err).to.be.equal('Password is required');
+          // expect(res.body.err).to.be.equal('Password is required');
 
           done();
         })
@@ -133,16 +126,13 @@ describe('Users', function () {
 
   describe('POST /login', function () {
     it('should return status code 200 with token of the logged-in user', function (done) {
-      let loginUser = {
-        email: 'william@gmail.com',
-        password: '1234'
-      }
 
       chai
         .request(app)
         .post(`/users/login`)
         .send(loginUser)
         .end((err, res) => {
+          console.log("hasil keluar test login ====", res.body)
           expect(err).to.be.null;
           expect(res).to.have.status(200);
           expect(res.body).to.be.an('object');
@@ -153,8 +143,8 @@ describe('Users', function () {
     })
 
     it('should return status code 403 with message "username/password is wrong" when email is not registered', function (done) {
-      let loginUser = {
-        email: 'boom@gmail.com',
+      let loginUserEmailWrong = {
+        email: 'haha@gmail.com',
         password: '1234',
         loginVia: 'website'
       }
@@ -162,35 +152,37 @@ describe('Users', function () {
       chai
         .request(app)
         .post(`/users/login`)
-        .send(loginUser)
+        .send(loginUserEmailWrong)
         .end((err, res) => {
+          console.log("hasil keluar test login ====", res.body)
           expect(err).to.be.null;
           expect(res).to.have.status(403);
           expect(res.body).to.be.an('object');
-          expect(res.body).to.have.property('err');
-          expect(res.body.err).to.be.equal('username/password is wrong');
+          expect(res.body).to.have.property('message');
+          expect(res.body.message).to.be.equal('Wrong Email/Password');
 
           done();
         })
     })
 
     it('should return status code 403 with message "username/password is wrong" when password is wrong', function (done) {
-      let loginUser = {
+      let loginUserPassWrong = {
         email: 'william@gmail.com',
-        password: '1234',
+        password: '123',
         loginVia: 'website'
       }
 
       chai
         .request(app)
         .post(`/users/login`)
-        .send(loginUser)
+        .send(loginUserPassWrong)
         .end((err, res) => {
+          console.log("hasil keluar test login ====", res.body)
           expect(err).to.be.null;
           expect(res).to.have.status(403);
           expect(res.body).to.be.an('object');
-          expect(res.body).to.have.property('err');
-          expect(res.body.err).to.be.equal('username/password is wrong');
+          expect(res.body).to.have.property('message');
+          expect(res.body.message).to.be.equal('Wrong Email/Password');
 
           done();
         })

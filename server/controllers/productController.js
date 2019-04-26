@@ -60,8 +60,9 @@ class productController {
             res.status(200).json (product)
         })
         .catch (error => {
-            res.status(error).json({
-                msg: 'ERROR Display details of Product ',error
+            res.status(404).json({
+                msg: 'Product Not Found',
+                error: error
             })
         })
     }
